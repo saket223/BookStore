@@ -64,6 +64,7 @@ const routes: Routes = [
         m => m.GdprCookieConsentModule
       ),
   },
+  { path: 'books', loadChildren: () => import('./book/book.module').then(m => m.BookModule) },
 ];
 
 @NgModule({
