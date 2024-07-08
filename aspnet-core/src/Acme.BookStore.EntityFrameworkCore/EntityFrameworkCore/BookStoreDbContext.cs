@@ -19,6 +19,7 @@ using Volo.Abp.Gdpr;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Acme.BookStore.Books;
 using Volo.Abp.EntityFrameworkCore.Modeling;
+using Acme.BookStore.Authors;
 
 namespace Acme.BookStore.EntityFrameworkCore;
 
@@ -30,7 +31,7 @@ public class BookStoreDbContext :
     IIdentityProDbContext,
     ISaasDbContext
 {
-    /* Add DbSet properties for your Aggregate Roots / Entities here. */
+    public DbSet<Author> Authors { get; set; }
     public DbSet<Book> Books { get; set; }
 
     #region Entities from the modules
@@ -88,6 +89,20 @@ public class BookStoreDbContext :
         builder.ConfigureGdpr();
 
         /* Configure your own tables/entities inside here */
+
+        builder.Entity<Author>(b =>
+        {
+            b.ToTable(BookStoreConsts.DbTablePrefix + "Authors",
+                BookStoreConsts.DbSchema);
+
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(AuthorConsts.MaxNameLength);
+
+            b.HasIndex(x => x.Name);
+        });
 
         builder.Entity<Book>(b =>
         {
